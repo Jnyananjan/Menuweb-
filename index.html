@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Gemini Eatery Menu</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for aesthetic dark theme and smooth scrolling */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0D0D0D; /* Deep Charcoal Black Background */
+            color: #F3F4F6; /* Light text */
+        }
+
+        /* Hide scrollbar for a cleaner look but still allow scrolling */
+        ::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+
+        /* Category item circle styling */
+        .category-icon-bg {
+            background-color: #1A1A1A; /* Darker circle background */
+            transition: transform 0.2s, background-color 0.2s;
+            border: 2px solid #1A1A1A;
+        }
+        .category-icon-bg:hover {
+            background-color: #333333;
+            border-color: #FFB703; /* Gold hover border */
+            transform: scale(1.05);
+        }
+
+        /* Carousel specific styles */
+        .carousel-track {
+            display: flex;
+            transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .offer-slide {
+            flex: 0 0 100%;
+        }
+        .carousel-container {
+            overflow: hidden;
+            touch-action: pan-y;
+        }
+        
+    </style>
+    <!-- Configuration for Tailwind colors -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-gold': '#FFB703', /* Vibrant Gold/Amber Accent */
+                        'dark-bg': '#0D0D0D',
+                        'card-bg': '#1A1A1A', /* Dark Card Background */
+                        'text-secondary': '#A0A0A0',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen">
+
+    <!-- Main Content Wrapper -->
+    <div class="max-w-4xl mx-auto px-4 py-8">
+
+        <!-- 1. Restaurant Header -->
+        <header class="text-center mb-10">
+            <div class="inline-flex items-center space-x-3 text-primary-gold mb-2">
+                <!-- Placeholder Logo/Icon (Simple SVG Star) -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="currentColor" class="text-primary-gold">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/>
+                </svg>
+                <h1 class="text-5xl font-extrabold tracking-tight text-gray-50">The Gemini Eatery</h1>
+            </div>
+            <p class="text-text-secondary italic">Fresh Food, Futuristic Flavors</p>
+        </header>
+
+        <!-- 2. Auto-Swiping Offers Carousel -->
+        <section class="mb-12 relative">
+            <h2 class="text-2xl font-semibold mb-4 text-gray-200">Current Offers</h2>
+            <div id="carousel-container" class="carousel-container rounded-xl shadow-2xl relative h-48 sm:h-56">
+                <div id="carousel-track" class="carousel-track h-full">
+                    <!-- Slides are populated by JavaScript -->
+                </div>
+                <!-- Navigation Buttons -->
+                <button onclick="prevSlide()" class="absolute top-1/2 left-4 transform -translate-y-1/2 p-2 bg-black/50 hover:bg-primary-gold/70 rounded-full transition z-10 text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                </button>
+                <button onclick="nextSlide()" class="absolute top-1/2 right-4 transform -translate-y-1/2 p-2 bg-black/50 hover:bg-primary-gold/70 rounded-full transition z-10 text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                </button>
+            </div>
+        </section>
+
+        <!-- 3. Category Selection -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-semibold mb-6 text-gray-200">Explore by Category</h2>
+            <div id="category-grid" class="grid grid-cols-3 gap-y-6 gap-x-2 sm:gap-x-4 transition-all duration-300 ease-in-out">
+                <!-- Categories populated by JavaScript -->
+            </div>
+        </section>
+        
+        <!-- 4. Dynamic Main Content Area (Recommended or Category Items) -->
+        <div id="dynamic-content-area" class="min-h-[500px]">
+
+            <!-- 4a. Back Button (Visible only when category items are shown) -->
+            <div id="back-button-container" class="mb-8 hidden">
+                <button onclick="showRecommendedView()" class="flex items-center text-primary-gold hover:text-white transition group">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 transform group-hover:-translate-x-1 transition"><path d="m15 18-6-6 6-6"/></svg>
+                    <span class="font-semibold">Back to Recommendations</span>
+                </button>
+            </div>
+
+            <!-- 4b. Recommended for You Section (Default view) -->
+            <section id="recommended-view">
+                <h2 class="text-3xl font-bold mb-6 text-primary-gold">🔥 Recommended for You</h2>
+                <div id="recommended-items" class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <!-- Items populated by JavaScript based on 'Recommended' category -->
+                </div>
+            </section>
+
+            <!-- 4c. Category Item List (Replaces Recommended view) -->
+            <section id="item-list-view" class="hidden">
+                <h2 id="item-list-title" class="text-3xl font-bold mb-6 text-gray-50"></h2>
+                <div id="category-item-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Items populated by JavaScript when a category is selected -->
+                </div>
+            </section>
+        </div>
+        
+    </div>
+    
+    <!-- 5. Interactive Footer -->
+    <footer class="bg-card-bg mt-12 py-10 px-4 border-t border-gray-800">
+        <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+            
+            <!-- Contact Info -->
+            <div>
+                <h4 class="text-xl font-bold mb-3 text-primary-gold">Contact Us</h4>
+                <p class="text-text-secondary mb-2 flex items-center justify-center md:justify-start">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 text-primary-gold"><path d="M22 16.92v3a2 2 0 0 1-2 2h-3.92c-6.95 0-12.98-6.03-12.98-12.98V4a2 2 0 0 1 2-2h3"/></svg>
+                    <a href="tel:+1-555-MENU-AI" class="hover:text-primary-gold transition">+1 (555) MENU-AI</a>
+                </p>
+                <p class="text-text-secondary flex items-center justify-center md:justify-start">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 text-primary-gold"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="m22 6-10 7L2 6"/></svg>
+                    <a href="mailto:info@geminieatery.com" class="hover:text-primary-gold transition">info@geminieatery.com</a>
+                </p>
+            </div>
+            
+            <!-- Address -->
+            <div>
+                <h4 class="text-xl font-bold mb-3 text-primary-gold">Location</h4>
+                <p class="text-text-secondary mb-2 flex items-start justify-center md:justify-start">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mt-1 mr-2 text-primary-gold flex-shrink-0"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <span>101 Silicon Valley Ave, <br> Future City, CA 94043</span>
+                </p>
+                <!-- Removed 'View on Map' link -->
+            </div>
+            
+            <!-- Hours -->
+            <div>
+                <h4 class="text-xl font-bold mb-3 text-primary-gold">Hours</h4>
+                <p class="text-text-secondary">Mon - Fri: 11:00 AM - 10:00 PM</p>
+                <p class="text-text-secondary">Sat - Sun: 11:00 AM - 11:00 PM</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // --- Mock Data ---
+        const MOCK_CATEGORIES = [
+            { id: 'pizza', name: 'Pizza', icon: '<path d="M12 21c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm0-14c-2.8 0-5 2.2-5 5s2.2 5 5 5 5-2.2 5-5-2.2-5-5-5zM12 3a9 9 0 0 1 9 9c0 4.97-4.03 9-9 9s-9-4.03-9-9c0-4.97 4.03-9 9-9z"/>' },
+            { id: 'burger', name: 'Burger', icon: '<path d="M10 20v-3.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5V20M2 10a1 1 0 0 1 1-1h18a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-6zM3 9a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h18a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H3z"/>' },
+            { id: 'pasta', name: 'Pasta', icon: '<path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z" fill="none" stroke="currentColor"/>' }, // Using star as a placeholder
+            { id: 'dessert', name: 'Dessert', icon: '<path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-3.5-6.5h7c.83 0 1.5-.67 1.5-1.5s-.67-1.5-1.5-1.5h-7c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5z"/>' }, // Using ice cream/circle as placeholder
+            { id: 'drinks', name: 'Drinks', icon: '<path d="M18 8c0-3.31-2.69-6-6-6S6 4.69 6 8c0 3.82 2.92 6.95 6 11 .62-.51 1.22-1.07 1.8-1.7v-2.1c-.2.03-.4.04-.6.04-1.65 0-3-1.35-3-3s1.35-3 3-3 3 1.35 3 3v2.5c.67.63 1.3 1.29 1.84 2.01l.16.27c2.2-2.31 3.5-5.32 3.5-8.02z"/>' },
+            // Additional categories to make 15
+            { id: 'indian', name: 'Indian Curries', icon: '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1.5 4.5h3v3h-3v-3zm0 4h3v3h-3v-3zm0 4h3v3h-3v-3z"/>' },
+            { id: 'chinese', name: 'Chinese Wok', icon: '<path d="M20 10H4c-1.1 0-2 .9-2 2v2c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-2c0-1.1-.9-2-2-2zm-6 4H8v-4h6v4z"/>' },
+            { id: 'mexican', name: 'Mexican Tacos', icon: '<path d="M22 10V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2zM4 6h16v4H4V6zm-2 6v6c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-6H2zm4 4h12v-2H6v2z"/>' },
+            { id: 'keto', name: 'Keto Friendly', icon: '<path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zM8 14h8V6H8v8z"/>' },
+            { id: 'vegan', name: 'Vegan Delights', icon: '<path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zM12 4c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6z"/>' },
+            { id: 'soup', name: 'Hot Soups', icon: '<path d="M19 12h-2V6H7v6H5c-1.1 0-2 .9-2 2v4c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-4c0-1.1-.9-2-2-2zM7 8h10v4H7V8z"/>' },
+            { id: 'seafood', name: 'Fresh Seafood', icon: '<path d="M21 14H3c-1.1 0-2 .9-2 2v2c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2v-2c0-1.1-.9-2-2-2zm-2 4H5v-2h14v2z"/>' },
+            { id: 'kids', name: 'Kids Meals', icon: '<path d="M12 2c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6 2.69-6 6-6zm0 14c-4.42 0-8 3.58-8 8h16c0-4.42-3.58-8-8-8z"/>' },
+            { id: 'breakfast', name: 'Breakfast', icon: '<path d="M21 12v3c0 1.1-.9 2-2 2H5c-1.1 0-2-.9-2-2v-3h18zm-2-2H5c-1.1 0-2 .9-2 2v1h18v-1c0-1.1-.9-2-2-2zM5 7c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2H5z"/>' },
+            { id: 'sandwich', name: 'Sandwich', icon: '<path d="M20 12V6c0-1.1-.9-2-2-2H6c-1.1 0-2 .9-2 2v6H2v8h20v-8h-2zm-2-2H6V6h12v4z"/>' },
+        ];
+        
+        // Generates mock items (10 per category)
+        function generateMockItems(categoryName) {
+            return Array.from({ length: 10 }, (_, i) => ({
+                id: `${categoryName.toLowerCase().replace(/\s/g, '-')}-${i + 1}`,
+                name: `${categoryName} Delight ${i + 1}`,
+                description: `A delicious description for the ${categoryName} Delight ${i + 1}. Features premium ingredients and a rich flavor profile.`,
+                price: (12.99 + (i * 0.5)).toFixed(2),
+                isTrending: i < 3 // Mark first 3 as trending
+            }));
+        }
+
+        const menuData = {
+            offers: [
+                { title: "20% Off All Pizzas!", subtitle: "Use code: PIZZA20", color: "bg-orange-600", emoji: "🍕" },
+                { title: "Buy 1 Get 1 Free on Burgers", subtitle: "Limited time offer!", color: "bg-blue-600", emoji: "🍔" },
+                { title: "Family Combo Deal - Save $15", subtitle: "Feeds 4 people easily", color: "bg-green-600", emoji: "👨‍👩‍👧‍👦" },
+                { title: "Free Dessert on orders over $50", subtitle: "Sweeten your meal!", color: "bg-purple-600", emoji: "🍰" }
+            ],
+            categories: MOCK_CATEGORIES,
+            items: MOCK_CATEGORIES.reduce((acc, cat) => {
+                acc[cat.id] = generateMockItems(cat.name);
+                return acc;
+            }, {})
+        };
+
+        // --- State Variables ---
+        let isMenuExpanded = false;
+        let activeCategory = null;
+        let currentSlide = 0;
+        let autoSlideInterval;
+
+        // --- DOM Elements ---
+        const categoryGrid = document.getElementById('category-grid');
+        const carouselTrack = document.getElementById('carousel-track');
+        const recommendedView = document.getElementById('recommended-view');
+        const recommendedItemsEl = document.getElementById('recommended-items');
+        const itemListView = document.getElementById('item-list-view');
+        const itemListComponent = document.getElementById('category-item-list');
+        const itemListTitle = document.getElementById('item-list-title');
+        const backButtonContainer = document.getElementById('back-button-container');
+
+
+        // --- Dynamic View Switching ---
+
+        function showCategoryItemsView(categoryId) {
+            recommendedView.classList.add('hidden');
+            itemListView.classList.remove('hidden');
+            backButtonContainer.classList.remove('hidden');
+            
+            renderCategoryItems(categoryId);
+            window.scrollTo({ top: backButtonContainer.offsetTop - 20, behavior: 'smooth' }); // Scroll to the top of the dynamic content
+        }
+
+        function showRecommendedView() {
+            itemListView.classList.add('hidden');
+            backButtonContainer.classList.add('hidden');
+            recommendedView.classList.remove('hidden');
+            activeCategory = null;
+        }
+
+        // --- Carousel Logic ---
+
+        let touchstartX = 0;
+        let touchendX = 0;
+        const swipeThreshold = 50;
+
+        function handleGesture() {
+            if (touchendX < touchstartX - swipeThreshold) {
+                nextSlide();
+            }
+            if (touchendX > touchstartX + swipeThreshold) {
+                prevSlide();
+            }
+        }
+
+        function initCarousel() {
+            menuData.offers.forEach(offer => {
+                const slide = document.createElement('div');
+                slide.className = `offer-slide p-6 rounded-xl shadow-lg flex items-center justify-center ${offer.color} text-white text-center select-none`;
+                slide.innerHTML = `
+                    <div class="space-y-2">
+                        <span class="text-5xl sm:text-6xl block">${offer.emoji}</span>
+                        <h3 class="text-xl sm:text-3xl font-bold">${offer.title}</h3>
+                        <p class="text-sm sm:text-lg opacity-90">${offer.subtitle}</p>
+                    </div>
+                `;
+                carouselTrack.appendChild(slide);
+            });
+            
+            const container = document.getElementById('carousel-container');
+            
+            container.addEventListener('touchstart', e => {
+                touchstartX = e.changedTouches[0].screenX;
+                clearInterval(autoSlideInterval);
+            }, false);
+
+            container.addEventListener('touchend', e => {
+                touchendX = e.changedTouches[0].screenX;
+                handleGesture();
+                startAutoSlide();
+            }, false);
+
+            startAutoSlide();
+        }
+
+        function updateCarousel() {
+            const containerWidth = carouselTrack.parentElement.clientWidth;
+            const offset = currentSlide * containerWidth;
+            carouselTrack.style.transform = `translateX(-${offset}px)`;
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % menuData.offers.length;
+            updateCarousel();
+        }
+
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + menuData.offers.length) % menuData.offers.length;
+            updateCarousel();
+        }
+
+        function startAutoSlide() {
+            clearInterval(autoSlideInterval); 
+            autoSlideInterval = setInterval(nextSlide, 5000);
+        }
+
+        // --- Category Menu Logic ---
+
+        function getIconSVG(pathData) {
+            return `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${pathData}</svg>`;
+        }
+
+        function renderCategories() {
+            categoryGrid.innerHTML = '';
+            
+            const categoriesToDisplay = isMenuExpanded ? menuData.categories : menuData.categories.slice(0, 5);
+            
+            categoriesToDisplay.forEach(cat => {
+                const button = document.createElement('button');
+                button.className = `flex flex-col items-center p-2 text-center focus:outline-none transition-all duration-150 transform hover:scale-105 ${activeCategory === cat.id ? 'opacity-100' : 'opacity-80 hover:opacity-100'}`;
+                button.innerHTML = `
+                    <div class="category-icon-bg w-20 h-20 sm:w-24 sm:h-24 rounded-full flex items-center justify-center text-primary-gold">
+                        ${getIconSVG(cat.icon)}
+                    </div>
+                    <span class="mt-2 text-sm font-medium text-gray-200">${cat.name}</span>
+                `;
+                button.onclick = () => selectCategory(cat.id);
+                categoryGrid.appendChild(button);
+            });
+
+            if (menuData.categories.length > 6) {
+                const buttonText = isMenuExpanded ? 'See Less' : 'See All (15)';
+                
+                const seeMoreButton = document.createElement('button');
+                seeMoreButton.className = `flex flex-col items-center p-2 text-center focus:outline-none transition-all duration-150 transform hover:scale-105 col-span-1`;
+                seeMoreButton.innerHTML = `
+                    <div class="category-icon-bg w-20 h-20 sm:w-24 sm:h-24 rounded-full flex items-center justify-center text-text-secondary border border-gray-700 hover:border-primary-gold">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            ${isMenuExpanded ? '<path d="m18 15-6-6-6 6"/>' : '<path d="m6 9 6 6 6-6"/>'}
+                        </svg>
+                    </div>
+                    <span class="mt-2 text-sm font-medium text-text-secondary">${buttonText}</span>
+                `;
+                seeMoreButton.onclick = toggleMenu;
+                categoryGrid.appendChild(seeMoreButton);
+            }
+        }
+
+        function toggleMenu() {
+            isMenuExpanded = !isMenuExpanded;
+            renderCategories();
+        }
+
+        function selectCategory(categoryId) {
+            // 1. Collapse the category menu
+            isMenuExpanded = false;
+            renderCategories();
+
+            // 2. Set active state and switch view
+            activeCategory = categoryId;
+            showCategoryItemsView(categoryId);
+        }
+
+        // --- Item Rendering Logic ---
+
+        function createItemCard(item, isRecommended = false) {
+            const card = document.createElement('div');
+            card.className = `${isRecommended ? 'flex items-center space-x-4' : 'flex flex-col space-y-2'} bg-card-bg p-4 rounded-lg shadow-xl transition hover:shadow-2xl hover:bg-gray-900/50`;
+            
+            const itemContent = `
+                <div class="${isRecommended ? 'flex-shrink-0 w-20 h-20' : 'w-full h-32'} bg-gray-700 rounded-md mb-2 flex items-center justify-center overflow-hidden">
+                    <img src="https://placehold.co/${isRecommended ? '80x80' : '400x300'}/333/fff?text=${item.name.replace(/\s/g, '+')}" 
+                         alt="${item.name}" class="w-full h-full object-cover opacity-70 rounded-md" 
+                         onerror="this.onerror=null; this.src='https://placehold.co/${isRecommended ? '80x80' : '400x300'}/333/fff?text=Image+Missing';">
+                </div>
+                <div class="${isRecommended ? 'flex-grow' : ''} flex flex-col h-full">
+                    <h3 class="text-xl font-bold text-gray-50">${item.name}</h3>
+                    <p class="text-sm text-text-secondary ${isRecommended ? 'line-clamp-2' : 'flex-grow'}">${item.description}</p>
+                    <div class="flex ${isRecommended ? 'justify-start mt-1' : 'justify-start items-center pt-3 border-t border-gray-800 mt-auto'}">
+                        <span class="text-2xl font-extrabold text-primary-gold">$${item.price}</span>
+                        <!-- Removed 'Suggest Pairing' button -->
+                    </div>
+                </div>
+            `;
+            
+            card.innerHTML = itemContent;
+            return card;
+        }
+
+        function renderCategoryItems(categoryId) {
+            const category = menuData.categories.find(c => c.id === categoryId);
+            const items = menuData.items[categoryId] || [];
+
+            itemListTitle.textContent = category ? `${category.name}` : 'Menu Items';
+            itemListComponent.innerHTML = '';
+            
+            if (items.length === 0) {
+                itemListComponent.innerHTML = '<p class="text-center col-span-full text-text-secondary">No items found in this category.</p>';
+            } else {
+                items.forEach(item => {
+                    itemListComponent.appendChild(createItemCard(item));
+                });
+            }
+        }
+
+        function renderRecommended() {
+            const allItems = Object.values(menuData.items).flat();
+            // Filter out items marked as trending (first 3 of each category in mock data)
+            const recommended = allItems.filter(item => item.isTrending).slice(0, 6);
+
+            recommendedItemsEl.innerHTML = '';
+
+            recommended.forEach(item => {
+                recommendedItemsEl.appendChild(createItemCard(item, true));
+            });
+        }
+
+        // --- Initialization ---
+
+        window.onload = function() {
+            initCarousel();
+            renderCategories();
+            renderRecommended();
+            // Start on the default Recommended view
+            showRecommendedView();
+        };
+
+        // Handle window resize to keep carousel positioning correct
+        window.addEventListener('resize', updateCarousel);
+    </script>
+</body>
+</html>
